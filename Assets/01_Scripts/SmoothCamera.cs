@@ -4,11 +4,9 @@ using UnityEngine;
 
 public class SmoothCamera : MonoBehaviour
 {
-    private const float dampTime = 0.15f;
-    private Vector3 velocity = Vector3.zero;
+    private Vector3 position = Vector3.zero;
     private Transform target;
     private Camera camera;
-    private Vector3 position = Vector3.zero;
 
     private void Start()
     {

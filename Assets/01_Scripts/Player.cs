@@ -22,6 +22,8 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
+        
+        // 마우스 위치에 따라 오른쪽 왼쪽 보기
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint( Input.mousePosition );
         if ( transform.position.x - mousePosition.x < 0.0f )
         {
@@ -33,30 +35,15 @@ public class Player : MonoBehaviour
         }
 
         state = PlayerState.Idle;
-        if ( Input.GetKey( KeyCode.W ) )
+        float AxisX = Input.GetAxisRaw( "Horizontal" );
+        float AxisY = Input.GetAxisRaw( "Vertical" );
+
+        if ( AxisX + AxisY != 0.0f )
         {
-            transform.Translate( Vector3.up * speed * Time.deltaTime );
             state = PlayerState.Run;
         }
 
-        if ( Input.GetKey( KeyCode.S ) )
-        {
-            transform.Translate( Vector3.down * speed * Time.deltaTime );
-            state = PlayerState.Run;
-        }
-
-        if ( Input.GetKey( KeyCode.D ) )
-        {
-            transform.Translate( Vector3.right * speed * Time.deltaTime );
-            state = PlayerState.Run;
-        }
-
-        if( Input.GetKey( KeyCode.A ) )
-        {
-            transform.Translate( Vector3.left * speed * Time.deltaTime );
-            state = PlayerState.Run;
-        }
-
+        transform.Translate( new Vector3( AxisX, AxisY, 0.0f ) * speed * Time.deltaTime );
         anim.SetInteger( "State", ( int )state );
     }
 }
