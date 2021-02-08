@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    public Camera cam;
     public Animator anim;
 
     private const float speed = 200.0f;
@@ -18,10 +19,22 @@ public class Player : MonoBehaviour
     private void Awake()
     {
         anim = GetComponent<Animator>();
+        cam = Camera.main;
     }
 
     void Update()
     {
+        Vector3 mousePosition = cam.ScreenToWorldPoint( Input.mousePosition );
+        if ( transform.position.x - mousePosition.x < 0.0f )
+        {
+            transform.localScale = new Vector3( 100, 100, 1 );
+        }
+        else
+        {
+            transform.localScale = new Vector3( -100, 100, 1 );
+        }
+
+
         state = PlayerState.Idle;
         if ( Input.GetKey( KeyCode.W ) )
         {
