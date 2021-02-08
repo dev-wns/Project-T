@@ -27,11 +27,11 @@ public class Player : MonoBehaviour
         Vector3 mousePosition = cam.ScreenToWorldPoint( Input.mousePosition );
         if ( transform.position.x - mousePosition.x < 0.0f )
         {
-            transform.localScale = new Vector3( 100, 100, 1 );
+            transform.localScale = new Vector3( 1, 1, 1 );
         }
         else
         {
-            transform.localScale = new Vector3( -100, 100, 1 );
+            transform.localScale = new Vector3( -1, 1, 1 );
         }
 
 
