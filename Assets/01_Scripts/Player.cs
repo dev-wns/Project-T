@@ -4,10 +4,13 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public Animator anim;
+    public Bullet defaultBullet;
+    public GameObject bulletCanvas;
 
+    private Animator anim;
     private const float speed = 500.0f;
     private PlayerState state = PlayerState.Idle;
+    private const float attackDelay = 0.05f;
 
     private enum PlayerState
     {
@@ -18,11 +21,26 @@ public class Player : MonoBehaviour
     private void Awake()
     {
         anim = GetComponent<Animator>();
+        StartCoroutine( Attack() );
+    }
+
+    private IEnumerator Attack()
+    {
+        while ( true )
+        {
+            if ( Input.GetMouseButton( 0 ) )
+            {
+                Bullet bullet = Instantiate( defaultBullet, bulletCanvas.transform );
+                bullet.transform.position = transform.position;
+                bullet.direction = ( Camera.main.ScreenToWorldPoint( Input.mousePosition ) - transform.position ).normalized;
+            }
+
+            yield return new WaitForSeconds( attackDelay );
+        }
     }
 
     private void Update()
     {
-        
         // 마우스 위치에 따라 오른쪽 왼쪽 보기
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint( Input.mousePosition );
         if ( transform.position.x - mousePosition.x < 0.0f )
