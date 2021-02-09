@@ -12,6 +12,8 @@ public class Player : MonoBehaviour
     private PlayerState state = PlayerState.Idle;
     private const float attackDelay = 0.05f;
 
+    private ObjectPool<Bullet> objectPool = new ObjectPool<Bullet>();
+
     private enum PlayerState
     {
         Idle = 0,
@@ -30,7 +32,7 @@ public class Player : MonoBehaviour
         {
             if ( Input.GetMouseButton( 0 ) )
             {
-                Bullet bullet = Instantiate( defaultBullet, bulletCanvas.transform );
+                Bullet bullet = objectPool.Spawn(); // Instantiate( defaultBullet, bulletCanvas.transform );
                 bullet.transform.position = transform.position;
                 bullet.direction = ( Camera.main.ScreenToWorldPoint( Input.mousePosition ) - transform.position ).normalized;
             }
