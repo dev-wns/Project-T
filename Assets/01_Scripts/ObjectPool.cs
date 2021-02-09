@@ -9,7 +9,6 @@ public class ObjectPool<Type> : MonoBehaviour where Type : MonoBehaviour
     private int capacity = 100;
     private int spare = 10;
 
-
     private void Initialize()
     {
         if ( ReferenceEquals( prefab, null ) )
