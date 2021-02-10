@@ -5,21 +5,19 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
     public Vector3 direction { get; set; }
+    private float timer = 0.0f;
     private float lifeTime = 1.5f;
+    private float moveSpeed = 1000.0f;
 
-    IEnumerator Die()
+    private void Update()
     {
-        yield return new WaitForSeconds( lifeTime );
-        Destroy( gameObject );
-    }
+        timer += Time.deltaTime;
+        if ( timer >= lifeTime )
+        {
+            timer = 0.0f;
+            ObjectPool.Instance.Despawn( this );
+        }
 
-    private void Awake()
-    {
-        StartCoroutine( Die() );
-    }
-
-    void Update()
-    {
-        transform.Translate( direction * 300.0f * Time.deltaTime );
+        transform.Translate( direction * moveSpeed * Time.deltaTime );
     }
 }

@@ -8,11 +8,9 @@ public class Player : MonoBehaviour
     public GameObject bulletCanvas;
 
     private Animator anim;
-    private const float speed = 500.0f;
+    private const float speed = 100.0f;
     private PlayerState state = PlayerState.Idle;
     private const float attackDelay = 0.05f;
-
-    private ObjectPool<Bullet> objectPool = new ObjectPool<Bullet>();
 
     private enum PlayerState
     {
@@ -32,9 +30,11 @@ public class Player : MonoBehaviour
         {
             if ( Input.GetMouseButton( 0 ) )
             {
-                Bullet bullet = objectPool.Spawn(); // Instantiate( defaultBullet, bulletCanvas.transform );
+                Bullet bullet = ObjectPool.Instance.Spawn( defaultBullet );
                 bullet.transform.position = transform.position;
-                bullet.direction = ( Camera.main.ScreenToWorldPoint( Input.mousePosition ) - transform.position ).normalized;
+                Vector3 dir = ( Camera.main.ScreenToWorldPoint( Input.mousePosition ) - transform.position ).normalized;
+                bullet.direction = new Vector3( dir.x, dir.y, 0.0f );
+                
             }
 
             yield return new WaitForSeconds( attackDelay );

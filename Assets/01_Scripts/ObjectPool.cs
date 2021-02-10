@@ -2,98 +2,81 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ObjectPool<Type> : MonoBehaviour where Type : MonoBehaviour
+public class ObjectPool : Singleton<ObjectPool>
 {
-    private Type prefab;
-    private Queue<Type> waitingPool = new Queue<Type>();
-    private int capacity = 100;
-    private int spare = 10;
+    [SerializeField]
+    private GameObject bulletCanvas;
+    [SerializeField]
+    private List<Bullet> prefabs = new List<Bullet>();
 
-    private void Initialize()
+    private Dictionary<string /* prefab name */, Queue<Bullet>> waitingPool = new Dictionary<string, Queue<Bullet>>();
+    private int capacity = 100;
+
+    private void Awake()
     {
-        if ( ReferenceEquals( prefab, null ) )
+        foreach ( Bullet prefab in prefabs )
         {
-            Debug.LogError( "Prefab is null during object pool initalization." );
+            waitingPool.Add( prefab.name, new Queue<Bullet>() );
+        }
+    }
+
+    private void Initialize( Bullet _prefab )
+    {
+        string keyName = _prefab.name;
+        if ( !waitingPool.ContainsKey( keyName ) )
+        {
+            Debug.LogError( _prefab.name + " : Prefab is null during object pool initalization." );
             return;
+        }
+
+        Transform organizedTransform = bulletCanvas.transform.Find( keyName );
+        if ( ReferenceEquals( organizedTransform, null ) )
+        {
+            GameObject organizedObject = new GameObject();
+            organizedObject.name = keyName;
+            organizedObject.transform.SetParent( bulletCanvas.transform );
+            organizedTransform = organizedObject.transform;
         }
 
         for ( int count = 0; count < capacity; ++count )
         {
-            Type type = Instantiate( prefab );
-            type.gameObject.SetActive( false );
-            waitingPool.Enqueue( type );
+            Bullet obj = Instantiate( _prefab );
+            obj.name = keyName;
+            obj.gameObject.SetActive( false );
+            obj.transform.SetParent( organizedTransform );
+            waitingPool[ keyName ].Enqueue( obj );
         }
     }
 
-    public Type Spawn()
+    public void Despawn( Bullet _object )
     {
-        if ( waitingPool.Count <= spare )
+        string keyName = _object.name;
+        if ( ReferenceEquals( _object, null ) )
         {
-            Initialize();
+            Debug.LogError( "object is null." );
+            return;
         }
 
-        Type type = waitingPool.Dequeue();
-        type.gameObject.SetActive( true );
-        return type;
+        _object.gameObject.SetActive( false );
+        waitingPool[ keyName ].Enqueue( _object );
     }
 
-    public Type Spawn( GameObject _parent )
+    public Bullet Spawn( Bullet _prefab )
     {
-        if ( waitingPool.Count <= spare )
+        string keyName = _prefab.name;
+        if ( !waitingPool.ContainsKey( keyName ) )
         {
-            Initialize();
+            Debug.LogError( _prefab.name + " : Prefab is null during object pool initalization." );
+            return null;
         }
 
-        Type type = waitingPool.Dequeue();
-        type.gameObject.SetActive( true );
-        type.gameObject.transform.SetParent( _parent.transform );
-        return type;
-    }
-
-    public Type Spawn( Vector3 _pos, GameObject _parent )
-    {
-        if ( waitingPool.Count <= spare )
+        if ( waitingPool[ keyName ].Count == 0 )
         {
-            Initialize();
+            Initialize( _prefab );
         }
 
-        Type type = waitingPool.Dequeue();
-        type.gameObject.SetActive( true );
-        type.transform.position = _pos;
-        type.gameObject.transform.SetParent( _parent.transform );
-        return type;
-    }
-
-    public Type Spawn( Vector3 _pos )
-    {
-        if ( waitingPool.Count <= spare )
-        {
-            Initialize();
-        }
-
-        Type type = waitingPool.Dequeue();
-        type.gameObject.SetActive( true );
-        type.transform.position = _pos;
-        return type;
-    }
-
-    public Type Spawn( Vector3 _pos, Quaternion _rot )
-    {
-        if ( waitingPool.Count <= spare )
-        {
-            Initialize();
-        }
-
-        Type type = waitingPool.Dequeue();
-        type.gameObject.SetActive( true );
-        type.transform.position = _pos;
-        type.transform.rotation = _rot;
-        return type;
-    }
-
-    public void Despawn( Type _type )
-    {
-        _type.gameObject.SetActive( false );
-        waitingPool.Enqueue( _type );
+        Bullet obj = waitingPool[ keyName ].Dequeue();
+        obj.gameObject.SetActive( true );
+        return obj;
     }
 }
