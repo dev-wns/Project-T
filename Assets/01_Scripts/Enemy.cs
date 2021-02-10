@@ -58,12 +58,10 @@ public class Enemy : MonoBehaviour
             if ( distance <= foundRange )
             {
                 ChangeState( EnemyState.ChasePlayer );
+                yield return null;
             }
 
-            if ( distance >= lostRange )
-            {
-                ChangeState( EnemyState.LostPlayer );
-            }
+            ChangeState( EnemyState.LostPlayer );
         }
     }
 
