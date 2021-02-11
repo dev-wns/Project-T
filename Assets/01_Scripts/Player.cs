@@ -8,7 +8,9 @@ public class Player : MonoBehaviour
     public GameObject bulletCanvas;
 
     private Animator anim;
-    private const float speed = 300.0f;
+    private float defaultSpeed = 300.0f;
+    private float lowSpeed = 100.0f;
+    private float speed = 0.0f;
     private PlayerState state = PlayerState.Idle;
     private const float attackDelay = 0.05f;
 
@@ -77,6 +79,12 @@ public class Player : MonoBehaviour
         if ( Input.GetKeyDown( KeyCode.Space ) )
         {
             transform.position = new Vector3( transform.position.x + ( AxisX * 100.0f ), transform.position.y + ( AxisY * 100.0f ), 0.0f );
+        }
+
+        speed = defaultSpeed;
+        if ( Input.GetKey( KeyCode.LeftShift ) )
+        {
+            speed = lowSpeed;
         }
 
         if ( AxisX + AxisY != 0.0f )
