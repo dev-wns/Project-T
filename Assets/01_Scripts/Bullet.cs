@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Bullet : MonoBehaviour
+public class Bullet : Object
 {
     public Vector3 direction { get; set; }
     private float timer = 0.0f;

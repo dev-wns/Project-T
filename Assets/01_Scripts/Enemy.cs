@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour
+public class Enemy : Character
 {
     public float attackDamege { get; protected set; } = 10.0f;
 
@@ -30,8 +30,10 @@ public class Enemy : MonoBehaviour
     private float foundRange = 500.0f;
     private float attackableRange = 300.0f;
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+
         ChangeState( state );
     }
 

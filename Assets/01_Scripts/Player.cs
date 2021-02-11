@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Player : MonoBehaviour
+public class Player : Character
 {
     public Bullet defaultBullet;
     public GameObject bulletCanvas;
@@ -15,9 +15,6 @@ public class Player : MonoBehaviour
     }
 
     private PlayerState state = PlayerState.Idle;
-
-    private Animator anim;
-    private SpriteRenderer spriteRenderer;
 
     private float defaultSpeed = 300.0f;
     private float lowSpeed = 100.0f;
@@ -36,10 +33,9 @@ public class Player : MonoBehaviour
     private bool isInvincible = false;
     private float invincibleTime = 1.0f;
 
-    private void Awake()
+    protected override void Awake()
     {
-        anim = GetComponent<Animator>();
-        spriteRenderer = GetComponent<SpriteRenderer>();
+        base.Awake();
 
         healthUI = transform.Find( "Health" ).GetComponent<Slider>();
         staminaUI = transform.Find( "Stamina" ).GetComponent<Slider>();
