@@ -124,8 +124,7 @@ public class Enemy : Character
             yield return null;
 
             Bullet _bullet = ObjectPool.Instance.Spawn( bullet ) as Bullet;
-            _bullet.transform.position = transform.position;
-            _bullet.direction = ( player.transform.position - transform.position ).normalized;
+            _bullet.Initialize( this, transform.position, ( player.transform.position - transform.position ).normalized, 100.0f );
 
             yield return new WaitForSeconds( attackDelay );
 

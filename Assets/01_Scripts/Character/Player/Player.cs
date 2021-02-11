@@ -56,21 +56,17 @@ public class Player : Character
                 Vector3 up = Quaternion.Euler( 0.0f, 0.0f, 90.0f ) * dir;
                 up.z = 0.0f;
 
+                Vector3 dirXZ = new Vector3( dir.x, dir.y, 0.0f );
+
                 Bullet bullet1 = ObjectPool.Instance.Spawn( bullet ) as Bullet;
-                bullet1.direction = new Vector3( dir.x, dir.y, 0.0f );
-                bullet1.transform.position = transform.position + ( up * 5.0f ) + ( bullet1.direction * 32.0f );
-
                 Bullet bullet2 = ObjectPool.Instance.Spawn( bullet ) as Bullet;
-                bullet2.direction = new Vector3( dir.x, dir.y, 0.0f );
-                bullet2.transform.position = transform.position + ( up * -5.0f )+ ( bullet2.direction * 32.0f );
-
                 Bullet bullet3 = ObjectPool.Instance.Spawn( bullet ) as Bullet;
-                bullet3.direction = new Vector3( dir.x, dir.y, 0.0f );
-                bullet3.transform.position = transform.position + ( up * 15.0f ) + ( bullet3.direction * 32.0f );
-
                 Bullet bullet4 = ObjectPool.Instance.Spawn( bullet ) as Bullet;
-                bullet4.direction = new Vector3( dir.x, dir.y, 0.0f );
-                bullet4.transform.position = transform.position + ( up * -15.0f ) + ( bullet4.direction * 32.0f );
+
+                bullet1.Initialize( this, transform.position + ( up * 5.0f   ) + ( dirXZ * 32.0f ), dirXZ );
+                bullet2.Initialize( this, transform.position + ( up * -5.0f  ) + ( dirXZ * 32.0f ), dirXZ );
+                bullet3.Initialize( this, transform.position + ( up * 15.0f  ) + ( dirXZ * 32.0f ), dirXZ );
+                bullet4.Initialize( this, transform.position + ( up * -15.0f ) + ( dirXZ * 32.0f ), dirXZ );
             }
 
             yield return new WaitForSeconds( attackDelay );
@@ -149,6 +145,26 @@ public class Player : Character
 
             Enemy enemy = _col.gameObject.GetComponent<Enemy>();
             health -= enemy.attackDamege;
+        }
+
+        if ( _col.CompareTag( "EnemyBullet" ) )
+        {
+            Bullet bullet = _col.gameObject.GetComponent<Bullet>();
+            if ( ReferenceEquals( bullet, null ) )
+            {
+                Debug.LogError( "bullet is null." );
+                return;
+            }
+
+            Enemy enemy = bullet.owner as Enemy;
+            if ( ReferenceEquals( bullet, null ) )
+            {
+                Debug.LogError( "bullet owner is null." );
+                return;
+            }
+
+            health -= enemy.attackDamege;
+            ObjectPool.Instance.Despawn( bullet );
         }
     }
 }

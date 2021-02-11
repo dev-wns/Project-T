@@ -4,20 +4,19 @@ using UnityEngine;
 
 public class Bullet : Object
 {
-    public Vector3 direction { get; set; }
+    public Character owner { get; private set; }
+
+    private Vector3 direction ;
     private float timer = 0.0f;
-    private float lifeTime = 1.5f;
-    private float moveSpeed = 1000.0f;
+    private float lifeTime = 5.0f;
+    private float speed = 1000.0f;
 
-    public enum BulletType
+    public void Initialize( Character _owner, Vector3 _spawnPos, Vector3 _direction, float _speed = 1000.0f )
     {
-        PlayerBullet,
-        EnemyBullet,
-    }
-
-    public void Initialize( BulletType _type )
-    {
-        gameObject.tag = _type.ToString();
+        owner = _owner;
+        transform.position = _spawnPos;
+        direction = _direction;
+        speed = _speed;
     }
 
     private void Update()
@@ -29,6 +28,6 @@ public class Bullet : Object
             ObjectPool.Instance.Despawn( this );
         }
 
-        transform.Translate( direction * moveSpeed * Time.deltaTime );
+        transform.Translate( direction * speed * Time.deltaTime );
     }
 }
