@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
@@ -16,7 +17,7 @@ public class Player : MonoBehaviour
     private PlayerState state = PlayerState.Idle;
 
     private Animator anim;
-    
+
     private float defaultSpeed = 300.0f;
     private float lowSpeed = 100.0f;
     private float speed = 0.0f;
@@ -24,14 +25,35 @@ public class Player : MonoBehaviour
     private float attackDelay = 0.05f;
     private float attackDamage = 100.0f;
 
+    private Slider healthUI;
+    private Slider staminaUI;
+
     private float health = 100.0f;
     private float stamina = 100.0f;
     private float staminaChargingSpeed = 10.0f;
+
     private float invincibleTime = 0.5f;
 
     private void Awake()
     {
         anim = GetComponent<Animator>();
+
+        healthUI = transform.Find( "Health" ).GetComponent<Slider>();
+        staminaUI = transform.Find( "Stamina" ).GetComponent<Slider>();
+
+        if ( ReferenceEquals( healthUI, null ) )
+        {
+            Debug.Log( "healthUI is null " );
+        }
+
+        if ( ReferenceEquals( staminaUI, null ) )
+        {
+            Debug.Log( "staminaUI is null " );
+        }
+
+        healthUI.maxValue = 100.0f;
+        staminaUI.maxValue = 100.0f;
+
         StartCoroutine( Attack() );
     }
 
@@ -103,6 +125,9 @@ public class Player : MonoBehaviour
         {
             speed = lowSpeed;
         }
+
+        healthUI.value = health;
+        staminaUI.value = stamina;
 
         if ( AxisX + AxisY != 0.0f )
         {
