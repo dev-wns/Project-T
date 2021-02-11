@@ -7,18 +7,27 @@ public class Player : MonoBehaviour
     public Bullet defaultBullet;
     public GameObject bulletCanvas;
 
-    private Animator anim;
-    private float defaultSpeed = 300.0f;
-    private float lowSpeed = 100.0f;
-    private float speed = 0.0f;
-    private PlayerState state = PlayerState.Idle;
-    private const float attackDelay = 0.05f;
-
     private enum PlayerState
     {
         Idle = 0,
         Run,
     }
+
+    private PlayerState state = PlayerState.Idle;
+
+    private Animator anim;
+    
+    private float defaultSpeed = 300.0f;
+    private float lowSpeed = 100.0f;
+    private float speed = 0.0f;
+
+    private float attackDelay = 0.05f;
+    private float attackDamage = 100.0f;
+
+    private float health = 100.0f;
+    private float stamina = 100.0f;
+    private float staminaChargingSpeed = 10.0f;
+    private float invincibleTime = 0.5f;
 
     private void Awake()
     {
@@ -74,14 +83,22 @@ public class Player : MonoBehaviour
         state = PlayerState.Idle;
         float AxisX = Input.GetAxisRaw( "Horizontal" );
         float AxisY = Input.GetAxisRaw( "Vertical" );
+        
+        speed = defaultSpeed;
 
         // Dash
-        if ( Input.GetKeyDown( KeyCode.Space ) )
+        if ( stamina <= 100.0f )
         {
+            stamina += staminaChargingSpeed * Time.deltaTime;
+        }
+
+        if ( stamina >= 100.0f && Input.GetKeyDown( KeyCode.Space ) )
+        {
+            stamina -= 100.0f;
             transform.position = new Vector3( transform.position.x + ( AxisX * 100.0f ), transform.position.y + ( AxisY * 100.0f ), 0.0f );
         }
 
-        speed = defaultSpeed;
+        // Walking
         if ( Input.GetKey( KeyCode.LeftShift ) )
         {
             speed = lowSpeed;
