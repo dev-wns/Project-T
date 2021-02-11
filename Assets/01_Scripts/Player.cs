@@ -68,9 +68,16 @@ public class Player : MonoBehaviour
             transform.localScale = new Vector3( -1, 1, 1 );
         }
 
+        // Movement
         state = PlayerState.Idle;
         float AxisX = Input.GetAxisRaw( "Horizontal" );
         float AxisY = Input.GetAxisRaw( "Vertical" );
+
+        // Dash
+        if ( Input.GetKeyDown( KeyCode.Space ) )
+        {
+            transform.position = new Vector3( transform.position.x + ( AxisX * 100.0f ), transform.position.y + ( AxisY * 100.0f ), 0.0f );
+        }
 
         if ( AxisX + AxisY != 0.0f )
         {
