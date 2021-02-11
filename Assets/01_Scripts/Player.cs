@@ -34,7 +34,7 @@ public class Player : MonoBehaviour
     private float staminaChargingSpeed = 10.0f;
 
     private bool isInvincible = false;
-    private float invincibleTime = 0.5f;
+    private float invincibleTime = 1.0f;
 
     private void Awake()
     {
@@ -153,7 +153,6 @@ public class Player : MonoBehaviour
 
             Enemy enemy = _col.gameObject.GetComponent<Enemy>();
             health -= enemy.attackDamege;
-            Debug.Log( "Hit" );
         }
     }
 }

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
+    public float attackDamege { get; protected set; } = 10.0f;
+
     [SerializeField]
     private Player player;
 
@@ -27,8 +29,6 @@ public class Enemy : MonoBehaviour
     private float lostRange = 700.0f;
     private float foundRange = 500.0f;
     private float attackableRange = 300.0f;
-
-    public float attackDamege { get; protected set; } = 10.0f;
 
     private void Awake()
     {
