@@ -10,7 +10,7 @@ public class Enemy : Character
     private Player player;
 
     [SerializeField]
-    private Bullet defaultBullet;
+    private Bullet bullet;
 
     private enum EnemyState
     {
@@ -123,9 +123,9 @@ public class Enemy : Character
         {
             yield return null;
 
-            Bullet bullet = ObjectPool.Instance.Spawn( defaultBullet ) as Bullet;
-            bullet.transform.position = transform.position;
-            bullet.direction = ( player.transform.position - transform.position ).normalized;
+            Bullet _bullet = ObjectPool.Instance.Spawn( bullet ) as Bullet;
+            _bullet.transform.position = transform.position;
+            _bullet.direction = ( player.transform.position - transform.position ).normalized;
 
             yield return new WaitForSeconds( attackDelay );
 

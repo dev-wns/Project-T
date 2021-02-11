@@ -9,6 +9,17 @@ public class Bullet : Object
     private float lifeTime = 1.5f;
     private float moveSpeed = 1000.0f;
 
+    public enum BulletType
+    {
+        PlayerBullet,
+        EnemyBullet,
+    }
+
+    public void Initialize( BulletType _type )
+    {
+        gameObject.tag = _type.ToString();
+    }
+
     private void Update()
     {
         timer += Time.deltaTime;

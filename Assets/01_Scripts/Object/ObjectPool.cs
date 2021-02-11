@@ -12,14 +12,6 @@ public class ObjectPool : Singleton<ObjectPool>
     private Dictionary<string /* prefab name */, Queue<Object>> waitingPool = new Dictionary<string, Queue<Object>>();
     private int capacity = 100;
 
-    private void Awake()
-    {
-        foreach ( Object prefab in prefabs )
-        {
-            waitingPool.Add( prefab.name, new Queue<Object>() );
-        }
-    }
-
     private void Initialize( Object _prefab )
     {
         string keyName = _prefab.name;
@@ -66,8 +58,7 @@ public class ObjectPool : Singleton<ObjectPool>
         string keyName = _prefab.name;
         if ( !waitingPool.ContainsKey( keyName ) )
         {
-            Debug.LogError( _prefab.name + " : Prefab is null during object pool initalization." );
-            return null;
+            waitingPool.Add( keyName, new Queue<Object>() );
         }
 
         if ( waitingPool[ keyName ].Count == 0 )
