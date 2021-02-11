@@ -56,19 +56,19 @@ public class Player : Character
                 Vector3 up = Quaternion.Euler( 0.0f, 0.0f, 90.0f ) * dir;
                 up.z = 0.0f;
 
-                Bullet bullet1 = ObjectPool.Instance.Spawn( defaultBullet );
+                Bullet bullet1 = ObjectPool.Instance.Spawn( defaultBullet ) as Bullet;
                 bullet1.direction = new Vector3( dir.x, dir.y, 0.0f );
                 bullet1.transform.position = transform.position + ( up * 10.0f ) + ( bullet1.direction * 32.0f );
 
-                Bullet bullet2 = ObjectPool.Instance.Spawn( defaultBullet );
+                Bullet bullet2 = ObjectPool.Instance.Spawn( defaultBullet ) as Bullet;
                 bullet2.direction = new Vector3( dir.x, dir.y, 0.0f );
                 bullet2.transform.position = transform.position + ( up * -10.0f )+ ( bullet2.direction * 32.0f );
 
-                Bullet bullet3 = ObjectPool.Instance.Spawn( defaultBullet );
+                Bullet bullet3 = ObjectPool.Instance.Spawn( defaultBullet ) as Bullet;
                 bullet3.direction = new Vector3( dir.x, dir.y, 0.0f );
                 bullet3.transform.position = transform.position + ( up * 30.0f ) + ( bullet3.direction * 32.0f );
 
-                Bullet bullet4 = ObjectPool.Instance.Spawn( defaultBullet );
+                Bullet bullet4 = ObjectPool.Instance.Spawn( defaultBullet ) as Bullet;
                 bullet4.direction = new Vector3( dir.x, dir.y, 0.0f );
                 bullet4.transform.position = transform.position + ( up * -30.0f ) + ( bullet4.direction * 32.0f );
             }

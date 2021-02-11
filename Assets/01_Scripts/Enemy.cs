@@ -123,7 +123,7 @@ public class Enemy : Character
         {
             yield return null;
 
-            Bullet bullet = ObjectPool.Instance.Spawn( defaultBullet );
+            Bullet bullet = ObjectPool.Instance.Spawn( defaultBullet ) as Bullet;
             bullet.transform.position = transform.position;
             bullet.direction = ( player.transform.position - transform.position ).normalized;
 

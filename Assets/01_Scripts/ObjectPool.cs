@@ -7,20 +7,20 @@ public class ObjectPool : Singleton<ObjectPool>
     [SerializeField]
     private GameObject bulletCanvas;
     [SerializeField]
-    private List<Bullet> prefabs = new List<Bullet>();
+    private List<Object> prefabs = new List<Object>();
 
-    private Dictionary<string /* prefab name */, Queue<Bullet>> waitingPool = new Dictionary<string, Queue<Bullet>>();
+    private Dictionary<string /* prefab name */, Queue<Object>> waitingPool = new Dictionary<string, Queue<Object>>();
     private int capacity = 100;
 
     private void Awake()
     {
-        foreach ( Bullet prefab in prefabs )
+        foreach ( Object prefab in prefabs )
         {
-            waitingPool.Add( prefab.name, new Queue<Bullet>() );
+            waitingPool.Add( prefab.name, new Queue<Object>() );
         }
     }
 
-    private void Initialize( Bullet _prefab )
+    private void Initialize( Object _prefab )
     {
         string keyName = _prefab.name;
         if ( !waitingPool.ContainsKey( keyName ) )
@@ -40,7 +40,7 @@ public class ObjectPool : Singleton<ObjectPool>
 
         for ( int count = 0; count < capacity; ++count )
         {
-            Bullet obj = Instantiate( _prefab );
+            Object obj = Instantiate( _prefab );
             obj.name = keyName;
             obj.gameObject.SetActive( false );
             obj.transform.SetParent( organizedTransform );
@@ -48,7 +48,7 @@ public class ObjectPool : Singleton<ObjectPool>
         }
     }
 
-    public void Despawn( Bullet _object )
+    public void Despawn( Object _object )
     {
         string keyName = _object.name;
         if ( ReferenceEquals( _object, null ) )
@@ -61,7 +61,7 @@ public class ObjectPool : Singleton<ObjectPool>
         waitingPool[ keyName ].Enqueue( _object );
     }
 
-    public Bullet Spawn( Bullet _prefab )
+    public Object Spawn( Object _prefab )
     {
         string keyName = _prefab.name;
         if ( !waitingPool.ContainsKey( keyName ) )
@@ -75,7 +75,7 @@ public class ObjectPool : Singleton<ObjectPool>
             Initialize( _prefab );
         }
 
-        Bullet obj = waitingPool[ keyName ].Dequeue();
+        Object obj = waitingPool[ keyName ].Dequeue();
         obj.gameObject.SetActive( true );
         return obj;
     }
