@@ -17,6 +17,7 @@ public class Player : MonoBehaviour
     private PlayerState state = PlayerState.Idle;
 
     private Animator anim;
+    private SpriteRenderer spriteRenderer;
 
     private float defaultSpeed = 300.0f;
     private float lowSpeed = 100.0f;
@@ -37,19 +38,10 @@ public class Player : MonoBehaviour
     private void Awake()
     {
         anim = GetComponent<Animator>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
 
         healthUI = transform.Find( "Health" ).GetComponent<Slider>();
         staminaUI = transform.Find( "Stamina" ).GetComponent<Slider>();
-
-        if ( ReferenceEquals( healthUI, null ) )
-        {
-            Debug.Log( "healthUI is null " );
-        }
-
-        if ( ReferenceEquals( staminaUI, null ) )
-        {
-            Debug.Log( "staminaUI is null " );
-        }
 
         healthUI.maxValue = 100.0f;
         staminaUI.maxValue = 100.0f;
@@ -94,11 +86,11 @@ public class Player : MonoBehaviour
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint( Input.mousePosition );
         if ( transform.position.x - mousePosition.x < 0.0f )
         {
-            transform.localScale = new Vector3( 1, 1, 1 );
+            spriteRenderer.flipX = false;
         }
         else
         {
-            transform.localScale = new Vector3( -1, 1, 1 );
+            spriteRenderer.flipX = true;
         }
 
         // Movement
