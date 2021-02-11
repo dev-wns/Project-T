@@ -33,6 +33,7 @@ public class Player : MonoBehaviour
     private float stamina = 100.0f;
     private float staminaChargingSpeed = 10.0f;
 
+    private bool isInvincible = false;
     private float invincibleTime = 0.5f;
 
     private void Awake()
@@ -128,5 +129,31 @@ public class Player : MonoBehaviour
 
         transform.Translate( new Vector3( AxisX, AxisY, 0.0f ) * speed * Time.deltaTime );
         anim.SetInteger( "State", ( int )state );
+    }
+
+    private IEnumerator Invincible()
+    {
+        isInvincible = true;
+
+        yield return new WaitForSeconds( invincibleTime );
+
+        isInvincible = false;
+    }
+
+    private void OnTriggerEnter2D( Collider2D _col )
+    {
+        if ( isInvincible )
+        {
+            return;
+        }
+
+        if ( _col.CompareTag( "Enemy" ) )
+        {
+            StartCoroutine( Invincible() );
+
+            Enemy enemy = _col.gameObject.GetComponent<Enemy>();
+            health -= enemy.attackDamege;
+            Debug.Log( "Hit" );
+        }
     }
 }

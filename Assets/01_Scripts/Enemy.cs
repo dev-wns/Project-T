@@ -19,11 +19,16 @@ public class Enemy : MonoBehaviour
     }
 
     private EnemyState state = EnemyState.Idle;
+    
     private Coroutine currentCoroutine = null;
+    
     private float attackDelay = 1.0f;
+
     private float lostRange = 700.0f;
     private float foundRange = 500.0f;
     private float attackableRange = 300.0f;
+
+    public float attackDamege { get; protected set; } = 10.0f;
 
     private void Awake()
     {
@@ -43,7 +48,6 @@ public class Enemy : MonoBehaviour
 
     private IEnumerator Idle()
     {
-        Debug.Log( "Idle" );
         while ( true )
         {
             yield return null;
@@ -67,7 +71,6 @@ public class Enemy : MonoBehaviour
 
     private IEnumerator LostPlayer()
     {
-        Debug.Log( "LostPlayer" );
         float width = Screen.width / 2.0f;
         float height = Screen.height / 2.0f;
         Vector3 pos = new Vector3( Random.Range( -width, width ), Random.Range( -height, height ));
@@ -92,7 +95,6 @@ public class Enemy : MonoBehaviour
 
     private IEnumerator ChasePlayer()
     {
-        Debug.Log( "ChasePlayer" );
         while ( true )
         {
             yield return null;
@@ -115,7 +117,6 @@ public class Enemy : MonoBehaviour
 
     private IEnumerator Attack()
     {
-        Debug.Log( "Attack" );
         while ( true )
         {
             yield return null;
