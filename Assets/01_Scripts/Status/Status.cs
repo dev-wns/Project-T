@@ -5,7 +5,6 @@ using System.Collections.Generic;
 public class Status
 {
     public float baseValue;
-
     protected bool isDirty = true;
     protected float lastBaseValue;
 

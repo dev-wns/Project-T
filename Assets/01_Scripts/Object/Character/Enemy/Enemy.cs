@@ -124,7 +124,7 @@ public class Enemy : Character
             Bullet _bullet = ObjectPool.Instance.Spawn( bullet ) as Bullet;
             _bullet.Initialize( this, transform.position, ( player.transform.position - transform.position ).normalized, 100.0f );
 
-            yield return new WaitForSeconds( attackDelay );
+            yield return YieldCache.WaitForSeconds( attackDelay );
 
             ChangeState( EnemyState.Idle );
         }

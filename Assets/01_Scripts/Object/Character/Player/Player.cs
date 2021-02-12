@@ -78,7 +78,7 @@ public class Player : Character
 
     private void FixedUpdate()
     {
-        rigidbody.velocity = inputXY * speed.Value;
+        rigidbody.velocity = inputXY * curSpeed;
     }
 
     private void OnTriggerEnter2D( Collider2D _col )
@@ -150,7 +150,7 @@ public class Player : Character
                 bullet2.Initialize( this, transform.position + ( up * -5.0f ) + ( dirXY * 32.0f ), dirXY );
             }
 
-            yield return new WaitForSeconds( attackDelay );
+            yield return YieldCache.WaitForSeconds( attackDelay );
         }
     }
 
@@ -158,7 +158,7 @@ public class Player : Character
     {
         isInvincible = true;
 
-        yield return new WaitForSeconds( invincibleTime );
+        yield return YieldCache.WaitForSeconds( invincibleTime );
         isInvincible = false;
     }
 }
