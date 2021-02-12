@@ -5,7 +5,7 @@ using UnityEngine;
 public class ObjectPool : Singleton<ObjectPool>
 {
     [SerializeField]
-    private GameObject bulletCanvas;
+    private GameObject outputCanvas;
     [SerializeField]
     private List<Object> prefabs = new List<Object>();
 
@@ -21,12 +21,12 @@ public class ObjectPool : Singleton<ObjectPool>
             return;
         }
 
-        Transform organizedTransform = bulletCanvas.transform.Find( keyName );
+        Transform organizedTransform = outputCanvas.transform.Find( keyName );
         if ( ReferenceEquals( organizedTransform, null ) )
         {
             GameObject organizedObject = new GameObject();
             organizedObject.name = keyName;
-            organizedObject.transform.SetParent( bulletCanvas.transform );
+            organizedObject.transform.SetParent( outputCanvas.transform );
             organizedTransform = organizedObject.transform;
         }
 

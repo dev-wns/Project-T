@@ -3,34 +3,30 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+public enum PlayerState
+{
+    Idle = 0,
+    Run,
+}
+
 [System.Serializable]
 public class Player : Character
 {
     [SerializeField] 
-    private GameObject bulletCanvas;
-    
-    [SerializeField] 
     private Bullet bullet;
-
-    private enum PlayerState
-    {
-        Idle = 0,
-        Run,
-    }
-
-    private PlayerState state = PlayerState.Idle;
-
-    private readonly float lowSpeed = 100.0f;
-    private float curSpeed = 0.0f;
-
-    private float attackDelay = 0.05f;
 
     private Slider healthUI;
     private Slider staminaUI;
 
+    private PlayerState state = PlayerState.Idle;
+
+    private float curSpeed;
+    private readonly float lowSpeed = 100.0f;
+
     private Status stamina = new Status();
     private Status staminaChargingSpeed = new Status();
     private float curStamina = 0.0f;
+    private float attackDelay = 0.05f;
 
     private float invincibleTime = 1.0f;
     private bool isInvincible = false;
@@ -47,93 +43,39 @@ public class Player : Character
 
         stamina.baseValue = 100.0f;
         staminaChargingSpeed.baseValue = 10.0f;
+        OnStaminaRecovery();
 
         StartCoroutine( Attack() );
     }
 
-    private IEnumerator Attack()
-    {
-        while ( true )
-        {
-            if ( Input.GetMouseButton( 0 ) )
-            {
-                Vector3 dir = ( Camera.main.ScreenToWorldPoint( Input.mousePosition ) - transform.position ).normalized;
-                Vector3 up = Quaternion.Euler( 0.0f, 0.0f, 90.0f ) * dir;
-                up.z = 0.0f;
-
-                Vector3 dirXZ = new Vector3( dir.x, dir.y, 0.0f );
-
-                Bullet bullet1 = ObjectPool.Instance.Spawn( bullet ) as Bullet;
-                Bullet bullet2 = ObjectPool.Instance.Spawn( bullet ) as Bullet;
-                Bullet bullet3 = ObjectPool.Instance.Spawn( bullet ) as Bullet;
-                Bullet bullet4 = ObjectPool.Instance.Spawn( bullet ) as Bullet;
-
-                bullet1.Initialize( this, transform.position + ( up * 5.0f   ) + ( dirXZ * 32.0f ), dirXZ );
-                bullet2.Initialize( this, transform.position + ( up * -5.0f  ) + ( dirXZ * 32.0f ), dirXZ );
-                bullet3.Initialize( this, transform.position + ( up * 15.0f  ) + ( dirXZ * 32.0f ), dirXZ );
-                bullet4.Initialize( this, transform.position + ( up * -15.0f ) + ( dirXZ * 32.0f ), dirXZ );
-            }
-
-            yield return new WaitForSeconds( attackDelay );
-        }
-    }
-
     private void Update()
     {
-        // 마우스 위치에 따라 오른쪽 왼쪽 보기
-        Vector3 mousePosition = Camera.main.ScreenToWorldPoint( Input.mousePosition );
-        if ( transform.position.x - mousePosition.x < 0.0f )
-        {
-            spriteRenderer.flipX = false;
-        }
-        else
-        {
-            spriteRenderer.flipX = true;
-        }
-
-        // Movement
         state = PlayerState.Idle;
-        float AxisX = Input.GetAxisRaw( "Horizontal" );
-        float AxisY = Input.GetAxisRaw( "Vertical" );
-
-        curSpeed = speed.Value;
-
-        // Dash
         if ( curStamina <= stamina.Value )
         {
             curStamina += staminaChargingSpeed.Value * Time.deltaTime;
         }
 
-        if ( curStamina >= 100.0f && Input.GetKeyDown( KeyCode.Space ) )
-        {
-            curStamina -= 100.0f;
-            transform.position = new Vector3( transform.position.x + ( AxisX * 100.0f ), transform.position.y + ( AxisY * 100.0f ), 0.0f );
-        }
-
-        // Walking
-        if ( Input.GetKey( KeyCode.LeftShift ) )
-        {
-            curSpeed = speed.Value;
-        }
+        InverseAxisX( Camera.main.ScreenToWorldPoint( Input.mousePosition ) );
 
         healthUI.value = curHealth;
         staminaUI.value = curStamina;
 
-        if ( AxisX + AxisY != 0.0f )
+        Vector2 axis = new Vector2( Input.GetAxisRaw( "Horizontal" ), Input.GetAxisRaw( "Vertical" ) );
+        if ( Input.GetKey( KeyCode.LeftShift ) )
         {
             state = PlayerState.Run;
+            curSpeed = lowSpeed;
         }
 
-        transform.Translate( new Vector3( AxisX, AxisY, 0.0f ) * curSpeed * Time.deltaTime );
+        if ( Input.GetKeyDown( KeyCode.Space ) && curStamina >= 100.0f )
+        {
+            curStamina -= 100.0f;
+            transform.position = new Vector2( transform.position.x + ( axis.x * 100.0f ), transform.position.y + ( axis.y * 100.0f ) );
+        }
+
+        transform.Translate( axis * curSpeed * Time.deltaTime );
         anim.SetInteger( "State", ( int )state );
-    }
-
-    private IEnumerator Invincible()
-    {
-        isInvincible = true;
-
-        yield return new WaitForSeconds( invincibleTime );
-        isInvincible = false;
     }
 
     private void OnTriggerEnter2D( Collider2D _col )
@@ -170,5 +112,45 @@ public class Player : Character
             curHealth -= enemy.damage.Value;
             ObjectPool.Instance.Despawn( bullet );
         }
+    }
+
+    private void OnStaminaRecovery( int _percent = 100 )
+    {
+        curStamina += stamina.Value * ( Mathf.Clamp( _percent, 0, 100 ) * 0.01f );
+
+        if ( stamina.Value < curStamina )
+        {
+            curStamina = stamina.Value;
+        }
+    }
+
+    private IEnumerator Attack()
+    {
+        while ( true )
+        {
+            if ( Input.GetMouseButton( 0 ) )
+            {
+                Vector3 dir = ( Camera.main.ScreenToWorldPoint( Input.mousePosition ) - transform.position ).normalized;
+                Vector3 up = Quaternion.Euler( 0.0f, 0.0f, 90.0f ) * dir;
+                up.z = 0.0f;
+
+                Vector3 dirXZ = new Vector3( dir.x, dir.y, 0.0f );
+                Bullet bullet1 = ObjectPool.Instance.Spawn( bullet ) as Bullet;
+                Bullet bullet2 = ObjectPool.Instance.Spawn( bullet ) as Bullet;
+
+                bullet1.Initialize( this, transform.position + ( up * 5.0f  ) + ( dirXZ * 32.0f ), dirXZ );
+                bullet2.Initialize( this, transform.position + ( up * -5.0f ) + ( dirXZ * 32.0f ), dirXZ );
+            }
+
+            yield return new WaitForSeconds( attackDelay );
+        }
+    }
+
+    private IEnumerator Invincible()
+    {
+        isInvincible = true;
+
+        yield return new WaitForSeconds( invincibleTime );
+        isInvincible = false;
     }
 }

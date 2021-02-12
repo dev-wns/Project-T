@@ -12,7 +12,6 @@ public class Character : Object
     protected Status health = new Status();
     protected float curHealth;
 
-
     protected override void Awake()
     {
         base.Awake();
@@ -32,6 +31,18 @@ public class Character : Object
         if ( health.Value < curHealth )
         {
             curHealth = health.Value;
+        }
+    }
+
+    protected void InverseAxisX( Vector2 _pos )
+    {
+        if ( transform.position.x - _pos.x < 0.0f )
+        {
+            spriteRenderer.flipX = false;
+        }
+        else
+        {
+            spriteRenderer.flipX = true;
         }
     }
 }
