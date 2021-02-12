@@ -18,10 +18,8 @@ public class Player : Character
     private Slider healthUI;
     private Slider staminaUI;
 
-    private PlayerState state = PlayerState.Idle;
-
     private float curSpeed;
-    private readonly float lowSpeed = 100.0f;
+    private readonly float walkSpeed = 100.0f;
 
     private Status stamina = new Status();
     private Status staminaChargingSpeed = new Status();
@@ -30,6 +28,8 @@ public class Player : Character
 
     private float invincibleTime = 1.0f;
     private bool isInvincible = false;
+
+    private Vector2 inputXY;
 
     protected override void Awake()
     {
@@ -50,32 +50,35 @@ public class Player : Character
 
     private void Update()
     {
-        state = PlayerState.Idle;
         if ( curStamina <= stamina.Value )
         {
             curStamina += staminaChargingSpeed.Value * Time.deltaTime;
         }
 
+        inputXY = new Vector2( Input.GetAxisRaw( "Horizontal" ), Input.GetAxisRaw( "Vertical" ) );
         InverseAxisX( Camera.main.ScreenToWorldPoint( Input.mousePosition ) );
 
         healthUI.value = curHealth;
         staminaUI.value = curStamina;
 
-        Vector2 axis = new Vector2( Input.GetAxisRaw( "Horizontal" ), Input.GetAxisRaw( "Vertical" ) );
+        curSpeed = speed.Value;
         if ( Input.GetKey( KeyCode.LeftShift ) )
         {
-            state = PlayerState.Run;
-            curSpeed = lowSpeed;
+            curSpeed = walkSpeed;
         }
 
         if ( Input.GetKeyDown( KeyCode.Space ) && curStamina >= 100.0f )
         {
             curStamina -= 100.0f;
-            transform.position = new Vector2( transform.position.x + ( axis.x * 100.0f ), transform.position.y + ( axis.y * 100.0f ) );
+            transform.position = new Vector2( transform.position.x + ( inputXY.x * 100.0f ), transform.position.y + ( inputXY.y * 100.0f ) );
         }
 
-        transform.Translate( axis * curSpeed * Time.deltaTime );
-        anim.SetInteger( "State", ( int )state );
+        UpdateAnimatorParameters();
+    }
+
+    private void FixedUpdate()
+    {
+        rigidbody.velocity = inputXY * speed.Value;
     }
 
     private void OnTriggerEnter2D( Collider2D _col )
@@ -124,6 +127,11 @@ public class Player : Character
         }
     }
 
+    private void UpdateAnimatorParameters()
+    {
+        anim.SetBool( AnimatorParameters.IsMove, rigidbody.velocity.sqrMagnitude > float.Epsilon );
+    }
+
     private IEnumerator Attack()
     {
         while ( true )
@@ -134,12 +142,12 @@ public class Player : Character
                 Vector3 up = Quaternion.Euler( 0.0f, 0.0f, 90.0f ) * dir;
                 up.z = 0.0f;
 
-                Vector3 dirXZ = new Vector3( dir.x, dir.y, 0.0f );
+                Vector3 dirXY = new Vector3( dir.x, dir.y, 0.0f );
                 Bullet bullet1 = ObjectPool.Instance.Spawn( bullet ) as Bullet;
                 Bullet bullet2 = ObjectPool.Instance.Spawn( bullet ) as Bullet;
 
-                bullet1.Initialize( this, transform.position + ( up * 5.0f  ) + ( dirXZ * 32.0f ), dirXZ );
-                bullet2.Initialize( this, transform.position + ( up * -5.0f ) + ( dirXZ * 32.0f ), dirXZ );
+                bullet1.Initialize( this, transform.position + ( up * 5.0f  ) + ( dirXY * 32.0f ), dirXY );
+                bullet2.Initialize( this, transform.position + ( up * -5.0f ) + ( dirXY * 32.0f ), dirXY );
             }
 
             yield return new WaitForSeconds( attackDelay );

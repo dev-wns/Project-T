@@ -6,6 +6,9 @@ public class Character : Object
 {
     [SerializeField] 
     protected Animator anim { get; private set; }
+
+    [SerializeField]
+    protected Rigidbody2D rigidbody;
     
     public Status damage { get; protected set; } = new Status();
     protected Status speed = new Status();
@@ -17,6 +20,8 @@ public class Character : Object
         base.Awake();
 
         anim = GetComponent<Animator>();
+
+        rigidbody = GetComponent<Rigidbody2D>();
 
         damage.baseValue = 10.0f;
         speed.baseValue = 100.0f;
