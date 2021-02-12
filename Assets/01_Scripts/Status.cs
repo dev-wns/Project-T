@@ -24,13 +24,13 @@ public class Status
         }
     }
 
-    public readonly IReadOnlyCollection<StatusModifier> StatusModifiers;
-    protected readonly List<StatusModifier> statusModifiers;
+    public readonly IReadOnlyCollection<StatusModifier> StatModifiers;
+    protected readonly List<StatusModifier> statModifiers;
 
     public Status()
     {
-        statusModifiers = new List<StatusModifier>();
-        StatusModifiers = statusModifiers.AsReadOnly();
+        statModifiers = new List<StatusModifier>();
+        StatModifiers = statModifiers.AsReadOnly();
     }
 
     public Status( float _value ) : this()
@@ -41,12 +41,12 @@ public class Status
     public virtual void AddModifier( StatusModifier _modifier )
     {
         isDirty = true;
-        statusModifiers.Add( _modifier );
+        statModifiers.Add( _modifier );
     }
 
     public virtual bool RemoveModifier( StatusModifier _modifier )
     {
-        if ( statusModifiers.Remove( _modifier ) )
+        if ( statModifiers.Remove( _modifier ) )
         {
             isDirty = true;
             return true;
@@ -56,7 +56,7 @@ public class Status
 
     public virtual bool RemoveAllModifiersFromSource( object _source )
     {
-        int numRemovals = statusModifiers.RemoveAll( modifier => modifier.Source == _source );
+        int numRemovals = statModifiers.RemoveAll( modifier => modifier.Source == _source );
 
         if ( numRemovals > 0 )
         {
@@ -84,28 +84,28 @@ public class Status
         float finalValue = baseValue;
         float sumPercentAdd = 0;
 
-        statusModifiers.Sort( CompareModifierOrder );
+        statModifiers.Sort( CompareModifierOrder );
 
-        for( int count = 0; count < statusModifiers.Count; ++count )
+        for( int count = 0; count < statModifiers.Count; ++count )
         {
-            StatusModifier modifier = statusModifiers[ count ];
+            StatusModifier modifier = statModifiers[ count ];
 
-            if ( modifier.Type == StatusModifierType.Flat )
+            if ( modifier.Type == StatModType.Flat )
             {
                 finalValue += modifier.Value;
             }
-            else if ( modifier.Type == StatusModifierType.PercentAdd )
+            else if ( modifier.Type == StatModType.PercentAdd )
             {
                 sumPercentAdd += modifier.Value;
 
-                if ( count + 1 >= statusModifiers.Count ||
-                     statusModifiers[ count + 1 ].Type != StatusModifierType.PercentAdd )
+                if ( count + 1 >= statModifiers.Count ||
+                     statModifiers[ count + 1 ].Type != StatModType.PercentAdd )
                 {
                     finalValue *= 1 + sumPercentAdd;
                     sumPercentAdd = 0;
                 }
             }
-            else if ( modifier.Type == StatusModifierType.PercentMult )
+            else if ( modifier.Type == StatModType.PercentMult )
             {
                 finalValue *= 1 + modifier.Value;
             }

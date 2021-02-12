@@ -1,5 +1,5 @@
 ﻿
-public enum StatusModifierType
+public enum StatModType
 {
     Flat = 100,
     PercentAdd = 200,
@@ -9,11 +9,11 @@ public enum StatusModifierType
 public class StatusModifier 
 {
     public readonly float Value;
-    public readonly StatusModifierType Type;
+    public readonly StatModType Type;
     public readonly int Order;
     public readonly object Source;
 
-    public StatusModifier( float _value, StatusModifierType _type, int _order, object _source )
+    public StatusModifier( float _value, StatModType _type, int _order, object _source )
     {
         Value = _value;
         Type = _type;
@@ -21,9 +21,9 @@ public class StatusModifier
         Source = _source;
     }
 
-    public StatusModifier( float _value, StatusModifierType _type ) : this( _value, _type, (int)_type, null ) { }
+    public StatusModifier( float _value, StatModType _type ) : this( _value, _type, (int)_type, null ) { }
 
-    public StatusModifier( float _value, StatusModifierType _type, int _order ) : this( _value, _type, _order, null ) { }
+    public StatusModifier( float _value, StatModType _type, int _order ) : this( _value, _type, _order, null ) { }
 
-    public StatusModifier( float _value, StatusModifierType _type,, object _source ) : this( _value, _type, (int)_type, _source ) { }
+    public StatusModifier( float _value, StatModType _type, object _source ) : this( _value, _type, (int)_type, _source ) { }
 }

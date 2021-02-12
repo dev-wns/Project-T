@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class Enemy : Character
 {
-    public float attackDamege { get; protected set; } = 10.0f;
-
     [SerializeField] 
     private Player player;
 
@@ -113,7 +111,7 @@ public class Enemy : Character
             }
 
             Vector3 dir = ( player.transform.position - transform.position ).normalized;
-            transform.Translate( dir * 100.0f * Time.deltaTime );
+            transform.Translate( dir * speed.Value * Time.deltaTime );
         }
     }
 

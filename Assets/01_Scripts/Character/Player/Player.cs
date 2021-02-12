@@ -20,22 +20,20 @@ public class Player : Character
 
     private PlayerState state = PlayerState.Idle;
 
-    private float defaultSpeed = 300.0f;
-    private float lowSpeed = 100.0f;
-    private float speed = 0.0f;
+    private readonly float lowSpeed = 100.0f;
+    private float curSpeed = 0.0f;
 
     private float attackDelay = 0.05f;
-    private float attackDamage = 100.0f;
 
     private Slider healthUI;
     private Slider staminaUI;
 
-    private float health = 100.0f;
-    private float stamina = 100.0f;
-    private float staminaChargingSpeed = 10.0f;
+    private Status stamina = new Status();
+    private Status staminaChargingSpeed = new Status();
+    private float curStamina = 0.0f;
 
-    private bool isInvincible = false;
     private float invincibleTime = 1.0f;
+    private bool isInvincible = false;
 
     protected override void Awake()
     {
@@ -46,6 +44,9 @@ public class Player : Character
 
         healthUI.maxValue = 100.0f;
         staminaUI.maxValue = 100.0f;
+
+        stamina.baseValue = 100.0f;
+        staminaChargingSpeed.baseValue = 10.0f;
 
         StartCoroutine( Attack() );
     }
@@ -94,36 +95,36 @@ public class Player : Character
         state = PlayerState.Idle;
         float AxisX = Input.GetAxisRaw( "Horizontal" );
         float AxisY = Input.GetAxisRaw( "Vertical" );
-        
-        speed = defaultSpeed;
+
+        curSpeed = speed.Value;
 
         // Dash
-        if ( stamina <= 100.0f )
+        if ( curStamina <= stamina.Value )
         {
-            stamina += staminaChargingSpeed * Time.deltaTime;
+            curStamina += staminaChargingSpeed.Value * Time.deltaTime;
         }
 
-        if ( stamina >= 100.0f && Input.GetKeyDown( KeyCode.Space ) )
+        if ( curStamina >= 100.0f && Input.GetKeyDown( KeyCode.Space ) )
         {
-            stamina -= 100.0f;
+            curStamina -= 100.0f;
             transform.position = new Vector3( transform.position.x + ( AxisX * 100.0f ), transform.position.y + ( AxisY * 100.0f ), 0.0f );
         }
 
         // Walking
         if ( Input.GetKey( KeyCode.LeftShift ) )
         {
-            speed = lowSpeed;
+            curSpeed = speed.Value;
         }
 
-        healthUI.value = health;
-        staminaUI.value = stamina;
+        healthUI.value = curHealth;
+        staminaUI.value = curStamina;
 
         if ( AxisX + AxisY != 0.0f )
         {
             state = PlayerState.Run;
         }
 
-        transform.Translate( new Vector3( AxisX, AxisY, 0.0f ) * speed * Time.deltaTime );
+        transform.Translate( new Vector3( AxisX, AxisY, 0.0f ) * curSpeed * Time.deltaTime );
         anim.SetInteger( "State", ( int )state );
     }
 
@@ -147,7 +148,7 @@ public class Player : Character
             StartCoroutine( Invincible() );
 
             Enemy enemy = _col.gameObject.GetComponent<Enemy>();
-            health -= enemy.attackDamege;
+            curHealth -= enemy.damage.Value;
         }
 
         if ( _col.CompareTag( "EnemyBullet" ) )
@@ -166,7 +167,7 @@ public class Player : Character
                 return;
             }
 
-            health -= enemy.attackDamege;
+            curHealth -= enemy.damage.Value;
             ObjectPool.Instance.Despawn( bullet );
         }
     }
