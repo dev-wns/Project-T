@@ -6,10 +6,10 @@ public class Enemy : Character
 {
     public float attackDamege { get; protected set; } = 10.0f;
 
-    [SerializeField]
+    [SerializeField] 
     private Player player;
 
-    [SerializeField]
+    [SerializeField] 
     private Bullet bullet;
 
     private enum EnemyState

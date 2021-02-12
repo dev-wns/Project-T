@@ -3,10 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+[System.Serializable]
 public class Player : Character
 {
-    public Bullet bullet;
-    public GameObject bulletCanvas;
+    [SerializeField] 
+    private GameObject bulletCanvas;
+    
+    [SerializeField] 
+    private Bullet bullet;
 
     private enum PlayerState
     {
@@ -128,7 +132,6 @@ public class Player : Character
         isInvincible = true;
 
         yield return new WaitForSeconds( invincibleTime );
-
         isInvincible = false;
     }
 

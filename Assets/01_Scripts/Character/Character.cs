@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Character : Object
 {
-    [SerializeField]
+    [SerializeField] 
     protected Animator anim { get; private set; }
 
     protected override void Awake()
@@ -12,6 +12,5 @@ public class Character : Object
         base.Awake();
 
         anim = GetComponent<Animator>();
-        Debug.Log( anim );
     }
 }
